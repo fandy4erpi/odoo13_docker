@@ -1,0 +1,28 @@
+version: '3.1'
+services:
+  web:
+    build:
+      context: build
+      dockerfile: ${DOCKERFILE_HR_NAME}
+    depends_on:
+      - db
+    ports:
+      - "${ODOO_HR_HTTP_PORT}:8069"
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./${ODOO_CONF_HR_FILE}:/etc/odoo/odoo.conf
+      - ./projects/${REPO_HR_NAME}:/mnt/extra-addons
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+
+volumes:
+  odoo-web-data:
+    external: false
+  odoo-db-data:
+    external: false
